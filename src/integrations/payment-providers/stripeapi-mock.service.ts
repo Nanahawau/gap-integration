@@ -23,7 +23,7 @@ export class StripeAPIMockService implements PaymentProviderInterface {
     // Simulate webhook call after 1 second
     setTimeout(() => {
       const { payment_id } = createPaymentRequest;
-      const status = payment_id.includes('fail')
+      const status = payment_id.toLowerCase().includes('fail')
         ? PaymentStatus.FAILED
         : PaymentStatus.SUCCESS;
       axios
