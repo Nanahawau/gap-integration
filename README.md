@@ -8,19 +8,13 @@ This service is a Node-based API built using NestJs for creating payments, desig
 
 ## API Documentation 
 
-You can explore and test the API endpoints using the following Postman collection:
+You can explore and test the API endpoints using the following Postman collection after setting it up locally:
 
 [Postman Collection Link](https://nans33.postman.co/workspace/Nans-Workspace~4b73d606-49c5-4534-8eb0-166cef476732/collection/9516731-5ee20437-90dd-4e9d-805b-845a79328dc9?action=share&creator=9516731)
 
 - **POST /payments**: Create a payment.
 - **POST /provider/webhook**: Simulate provider callback.
 - **GET /payments/:id**: Get payment details.
-
-
-## Authentication 
-
-The API is secured using an authentication key. This key is added as the `x-authentication` field in the header. To run the application successfully generate an authentication key and add to the env file. When running the application via Postman, provide the key in the header. 
-
 
 
 
@@ -154,6 +148,12 @@ npm run start:dev
 - **POST /payments**: Create a payment.
 - **POST /provider/webhook**: Simulate provider callback.
 - **GET /payments/:id**: Get payment status/details.
+
+
+## Authentication 
+
+The API is secured using an authentication key. This key is added as the `x-authentication` field in the header. To run the application successfully generate an authentication key and add to the env file. When running the application via Postman, provide the key in the header. 
+
 
 ---
 
