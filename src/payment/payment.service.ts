@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Inject,
   Injectable,
-  InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -11,6 +10,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Payment } from './entities/payment.entity';
 import { PaymentProviderInterface } from 'src/integrations/payment-providers/payment-provider.interface';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class PaymentService {
@@ -19,9 +20,20 @@ export class PaymentService {
     @InjectRepository(Payment) private paymentRepository: Repository<Payment>,
     @Inject('PAYMENT_PROVIDER')
     private readonly paymentProvider: PaymentProviderInterface,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
   async create(createPaymentDto: CreatePaymentDto) {
     const { payment_id } = createPaymentDto;
+    const lockKey = `lock:payment:${payment_id}`;
+    const lockAcquired = await this.cacheManager.set(lockKey, 'locked', 60000);
+
+    // If the lock already exists, set will not prevent overwrites, so check before setting
+    const existingLock = await this.cacheManager.get(lockKey);
+
+    if (existingLock) {
+      throw new Error('Payment is being processed. Please try again later.');
+    }
+
     const validPayment = await this.isPaymentIdValid(payment_id);
 
     if (!validPayment)

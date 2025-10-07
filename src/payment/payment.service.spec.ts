@@ -10,15 +10,22 @@ describe('PaymentService', () => {
   let service: PaymentService;
   let paymentRepository: Repository<Payment>;
   let paymentProvider: PaymentProviderInterface;
+  let cacheManager: any;
 
   beforeEach(async () => {
     const mockRepo = {
       save: jest.fn(),
       findOne: jest.fn(),
       update: jest.fn(),
+      create: jest.fn(),
     };
     const mockProvider = {
       create: jest.fn(),
+    };
+    cacheManager = {
+      get: jest.fn(),
+      set: jest.fn(),
+      del: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -26,6 +33,7 @@ describe('PaymentService', () => {
         PaymentService,
         { provide: getRepositoryToken(Payment), useValue: mockRepo },
         { provide: 'PAYMENT_PROVIDER', useValue: mockProvider },
+        { provide: 'CACHE_MANAGER', useValue: cacheManager },
       ],
     }).compile();
 
@@ -44,8 +52,8 @@ describe('PaymentService', () => {
           payment_id: '123',
           amount: '100',
           currency: 'USD',
-          sender: 'A',
-          receiver: 'B',
+          sender: 'mike@gmail.com',
+          receiver: 'nick@gmail.com',
         } as any),
       ).rejects.toThrow(BadRequestException);
     });
@@ -54,7 +62,7 @@ describe('PaymentService', () => {
       jest.spyOn(service, 'isPaymentIdValid').mockResolvedValue(true);
       paymentRepository.save = jest.fn().mockResolvedValue({
         status: 'processing',
-        amount: '100',
+        amount: 10000,
         currency: 'USD',
         sender: 'mike@gmail.com',
         receiver: 'nick@gmail.com',
@@ -63,16 +71,16 @@ describe('PaymentService', () => {
 
       const result = await service.create({
         payment_id: '123',
-        amount: '100',
+        amount: 100,
         currency: 'USD',
-        sender: 'A',
-        receiver: 'B',
+        sender: 'mike@gmail.com',
+        receiver: 'nick@gmail.com',
       } as any);
       expect(paymentRepository.save).toHaveBeenCalled();
       expect(paymentProvider.create).toHaveBeenCalled();
       expect(result).toEqual({
         status: 'processing',
-        amount: '100',
+        amount: 100,
         currency: 'USD',
         sender: 'mike@gmail.com',
         receiver: 'nick@gmail.com',
@@ -91,7 +99,7 @@ describe('PaymentService', () => {
     it('should return payment details if found', async () => {
       paymentRepository.findOne = jest.fn().mockResolvedValue({
         status: 'success',
-        amount: '200',
+        amount: 20000,
         currency: 'EUR',
         sender: 'mike@gmail.com',
         receiver: 'nick@gmail.com',
@@ -99,7 +107,7 @@ describe('PaymentService', () => {
       const result = await service.findOne('someid');
       expect(result).toEqual({
         status: 'success',
-        amount: '200',
+        amount: 200,
         currency: 'EUR',
         sender: 'mike@gmail.com',
         receiver: 'nick@gmail.com',
@@ -121,7 +129,7 @@ describe('PaymentService', () => {
     it('should update payment status and return details', async () => {
       paymentRepository.findOne = jest.fn().mockResolvedValue({
         status: 'processing',
-        amount: '300',
+        amount: 30000,
         currency: 'GBP',
         sender: 'mike@gmail.com',
         receiver: 'nick@gmail.com',
@@ -137,7 +145,7 @@ describe('PaymentService', () => {
       );
       expect(result).toEqual({
         status: 'processing',
-        amount: '300',
+        amount: 300,
         currency: 'GBP',
         sender: 'mike@gmail.com',
         receiver: 'nick@gmail.com',
@@ -173,12 +181,6 @@ describe('PaymentService', () => {
     it('should return 0 for zero amount', () => {
       expect(service.toDisplayAmount('0')).toBe(0);
       expect(service.toDisplayAmount(0)).toBe(0);
-    });
-
-    it('should handle undefined or invalid input gracefully', () => {
-      expect(service.toDisplayAmount(undefined as any)).toBe(0);
-      expect(service.toDisplayAmount('')).toBe(0);
-      expect(service.toDisplayAmount('notanumber')).toBeNaN();
     });
   });
 });

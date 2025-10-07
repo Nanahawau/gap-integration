@@ -205,7 +205,7 @@ docker-compose --env-file .env up --build
 ### Storing Amounts in Lower Denomination
 
 **Decision:**  
-All monetary amounts are stored in the database using the lower denomination of the currency (for example, cents for USD, kobo for NGN).
+1. All monetary amounts are stored in the database using the lower denomination of the currency (for example, cents for USD, kobo for NGN).
 
 **Reasoning:**  
 - **Precision:** JavaScript’s `number` type and many databases can lose precision when handling floating-point arithmetic, especially for financial transactions. Storing amounts as integers (lower denomination) avoids rounding errors.
@@ -218,6 +218,10 @@ All monetary amounts are stored in the database using the lower denomination of 
 - ₦200.00 NGN is stored as `20000` (kobo).
 
 This approach ensures that all monetary values are handled safely and accurately throughout the application.
+
+2. Global interceptors for authentication, logging, and response formatting are registered in the application module to ensure consistent behavior and centralized request handling across all endpoints.
+
+3. 
 
 ---
 

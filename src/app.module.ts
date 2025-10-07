@@ -11,6 +11,7 @@ import { AuthenticationInterceptor } from 'common/interceptors/authentication.in
 import { Payment } from './payment/entities/payment.entity';
 import { ResponseInterceptor } from 'common/interceptors/response.interceptor';
 import { LoggingInterceptor } from 'common/interceptors/logging.interceptor';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { LoggingInterceptor } from 'common/interceptors/logging.interceptor';
       }),
     }),
     PaymentModule,
+    CacheModule.register()
   ],
   controllers: [AppController],
   providers: [
