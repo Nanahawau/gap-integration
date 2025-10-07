@@ -29,7 +29,7 @@ export class PaymentService {
     // Check if lock exists first
     const existingLock = await this.cacheManager.get(lockKey);
     if (existingLock) {
-      throw new Error('Payment is being processed. Please try again later.');
+      throw new BadRequestException('Payment is being processed. Please try again later.');
     }
 
     // Set the lock with TTL
