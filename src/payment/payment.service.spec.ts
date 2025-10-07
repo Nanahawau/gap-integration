@@ -50,7 +50,7 @@ describe('PaymentService', () => {
       await expect(
         service.create({
           payment_id: '123',
-          amount: '100',
+          amount: 100,
           currency: 'USD',
           sender: 'mike@gmail.com',
           receiver: 'nick@gmail.com',
