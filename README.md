@@ -50,22 +50,16 @@ The service uses a single `payment` table with the following schema:
 
 ### How to Create the Database and Table
 
-1. **Log into MySQL:**
-   ```bash
-   docker exec -it <container_name> mysql -u root -p
-   ```
-   Enter your password when prompted.
-
-2. **Create the database:**
+1. **Create the database:**
    ```sql
    CREATE DATABASE gap-payment;
    USE gap-payment;
    ```
 
-3. **Run the DDL to create the table:**
+2. **Run the DDL to create the table:**
    Copy and paste the SQL above into your MySQL prompt.
 
-   ```sql
+   `sql
 CREATE TABLE `payment` (
   `id` int NOT NULL AUTO_INCREMENT,
   `status` enum('processing','success','failed') NOT NULL DEFAULT 'processing',
@@ -82,7 +76,7 @@ CREATE TABLE `payment` (
   KEY `IDX_b57d4a795f57f8267940deacfb` (`receiver`),
   KEY `IDX_41f2c5480b079efda823e4794e` (`currency`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-```
+`
 
 ---
 
@@ -105,15 +99,14 @@ CREATE TABLE `payment` (
 
 ### 1. Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18 or later recommended)
+- [Node.js](https://nodejs.org/) (v20 or later recommended)
 - [MySQL](https://dev.mysql.com/downloads/mysql/) (running locally)
-- [npm](https://www.npmjs.com/)
 
 ### 2. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/payment-service.git
-cd payment-service
+git clone https://github.com/Nanahawau/gap-integration.git
+cd gap-integration
 ```
 
 ### 3. Create a MySQL Database
@@ -131,7 +124,6 @@ Copy `.env.example` to `.env` and fill in your secrets:
 ```
 DATABASE_TYPE=mysql
 DATABASE_HOST=localhost // when running without docker
-DATABASE_HOST=mysql // when running with docker
 DATABASE_PORT=3306
 DATABASE_USERNAME=root
 DATABASE_PASSWORD=yourpassword
@@ -165,19 +157,17 @@ npm run start:dev
 
 ---
 
-**You can now develop and test the service locally without Docker.**
 
 ## Local Development Setup with Docker 
 
 ### 1. Prerequisites
 
 - [Docker](https://www.docker.com/get-started)
-- [Docker Compose](https://docs.docker.com/compose/)
 
 ### 2. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/payment-service.git
+git clone https://github.com/Nanahawau/gap-integration.git
 cd gap-integration
 ```
 
@@ -186,10 +176,14 @@ cd gap-integration
 Copy `.env.example` to `.env` and fill in your secrets:
 
 ```
+DATABASE_TYPE=mysql
+DATABASE_HOST=mysql // when running with docker
+DATABASE_PORT=3306
 DATABASE_USERNAME=root
 DATABASE_PASSWORD=yourpassword
 DATABASE_NAME=gap-payment
 AUTHENTICATION_KEY=your-auth-key
+PORT=3000
 ```
 
 **Note:**  
