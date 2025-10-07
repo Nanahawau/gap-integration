@@ -221,7 +221,7 @@ This approach ensures that all monetary values are handled safely and accurately
 
 2. Global interceptors for authentication, logging, and response formatting are registered in the application module to ensure consistent behavior and centralized request handling across all endpoints.
 
-3. 
+3. Idempotency is implemented by acquiring a cache-based lock for each payment request and enforcing uniqueness of the payment ID, ensuring that duplicate or concurrent requests with the same payment ID are safely ignored and only one payment is processed.
 
 ---
 
