@@ -10,6 +10,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthenticationInterceptor } from 'common/interceptors/authentication.interceptor';
 import { Payment } from './payment/entities/payment.entity';
 import { ResponseInterceptor } from 'common/interceptors/response.interceptor';
+import { LoggingInterceptor } from 'common/interceptors/logging.interceptor';
 
 @Module({
   imports: [
@@ -39,6 +40,10 @@ import { ResponseInterceptor } from 'common/interceptors/response.interceptor';
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
     },
     {
       provide: APP_INTERCEPTOR,

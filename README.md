@@ -232,7 +232,7 @@ This approach ensures that all monetary values are handled safely and accurately
 ## Proposed Improvement
 
 - Create a table with retention policy to save request and responses from payment providers. This is so that at every point in time, we have the logs for every call to all providers and we can always review the responses and request. 
-- Create a cron that run at a determined interval to help process reconciliation activities. Payment providers are not 100 percent reliable due to that some transactions will be stuck in a limbo state and we might need to mark them as failed. So we need an async service for this process. 
+- Create a cron that run at a determined interval to help process reconciliation activities. Payment providers are not 100 percent reliable due to that some transactions will be stuck in a limbo state and we might need to mark them as failed or success. So we need an asynchronous service for this process. 
 
 ## License
 
