@@ -45,7 +45,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
       status = exception.getStatus();
     } else if (exception.name === 'ValidationError') {
       status = HttpStatus.BAD_REQUEST;
-      errors = exception.errors; // Mongoose validation errors
+      errors = exception.errors;
     } else if (typeof exception.statusCode === 'number') {
       status = exception.statusCode;
     } else if (typeof exception.status === 'number') {
@@ -57,8 +57,6 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
     const message = exception.response
       ? exception.response.message
       : exception.message;
-
-    console.log({ exception });
 
     response.status(status).json({
       status: false,
