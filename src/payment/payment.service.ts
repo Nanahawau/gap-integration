@@ -25,14 +25,15 @@ export class PaymentService {
   async create(createPaymentDto: CreatePaymentDto) {
     const { payment_id } = createPaymentDto;
     const lockKey = `lock:payment:${payment_id}`;
-    const lockAcquired = await this.cacheManager.set(lockKey, 'locked', 60000);
 
-    // If the lock already exists, set will not prevent overwrites, so check before setting
+    // Check if lock exists first
     const existingLock = await this.cacheManager.get(lockKey);
-
     if (existingLock) {
       throw new Error('Payment is being processed. Please try again later.');
     }
+
+    // Set the lock with TTL
+    await this.cacheManager.set(lockKey, 'locked', 60000);
 
     const validPayment = await this.isPaymentIdValid(payment_id);
 

@@ -45,8 +45,8 @@ describe('PaymentService', () => {
   });
 
   describe('create', () => {
-    it('should throw BadRequestException if payment ID is not valid', async () => {
-      jest.spyOn(service, 'isPaymentIdValid').mockResolvedValue(false);
+    it('should throw error if lock exists', async () => {
+      cacheManager.get.mockResolvedValue('locked');
       await expect(
         service.create({
           payment_id: '123',
@@ -55,11 +55,21 @@ describe('PaymentService', () => {
           sender: 'mike@gmail.com',
           receiver: 'nick@gmail.com',
         } as any),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow('Payment is being processed. Please try again later.');
     });
 
-    it('should save payment and call provider', async () => {
+    it('should set lock, save payment, call provider, and release lock', async () => {
+      cacheManager.get.mockResolvedValue(null);
+      cacheManager.set.mockResolvedValue(undefined);
+      cacheManager.del.mockResolvedValue(undefined);
       jest.spyOn(service, 'isPaymentIdValid').mockResolvedValue(true);
+      paymentRepository.create = jest.fn().mockReturnValue({
+        payment_id: '123',
+        amount: 100,
+        currency: 'USD',
+        sender: 'mike@gmail.com',
+        receiver: 'nick@gmail.com',
+      });
       paymentRepository.save = jest.fn().mockResolvedValue({
         status: 'processing',
         amount: 10000,
@@ -76,8 +86,17 @@ describe('PaymentService', () => {
         sender: 'mike@gmail.com',
         receiver: 'nick@gmail.com',
       } as any);
+      
+      expect(paymentRepository.create).toHaveBeenCalledWith({
+        payment_id: '123',
+        amount: 100,
+        currency: 'USD',
+        sender: 'mike@gmail.com',
+        receiver: 'nick@gmail.com',
+      });
       expect(paymentRepository.save).toHaveBeenCalled();
       expect(paymentProvider.create).toHaveBeenCalled();
+    
       expect(result).toEqual({
         status: 'processing',
         amount: 100,
@@ -85,6 +104,20 @@ describe('PaymentService', () => {
         sender: 'mike@gmail.com',
         receiver: 'nick@gmail.com',
       });
+    });
+
+    it('should throw BadRequestException if payment ID is not valid', async () => {
+      cacheManager.get.mockResolvedValue(null);
+      jest.spyOn(service, 'isPaymentIdValid').mockResolvedValue(false);
+      await expect(
+        service.create({
+          payment_id: '123',
+          amount: 100,
+          currency: 'USD',
+          sender: 'mike@gmail.com',
+          receiver: 'nick@gmail.com',
+        } as any),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
