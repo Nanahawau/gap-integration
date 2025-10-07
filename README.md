@@ -77,7 +77,72 @@ The service uses a single `payment` table with the following columns:
 
 ---
 
-## Local Development Setup
+## Local Development Setup (Without Docker)
+
+### 1. Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18 or later recommended)
+- [MySQL](https://dev.mysql.com/downloads/mysql/) (running locally)
+- [npm](https://www.npmjs.com/)
+
+### 2. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/payment-service.git
+cd payment-service
+```
+
+### 3. Create a MySQL Database
+
+Start your MySQL server and create a database:
+
+```sql
+CREATE DATABASE gap-payment;
+```
+
+### 4. Create a `.env` File
+
+Copy `.env.example` to `.env` and fill in your secrets:
+
+```
+DATABASE_TYPE=mysql
+DATABASE_HOST=localhost
+DATABASE_PORT=3306
+DATABASE_USERNAME=root
+DATABASE_PASSWORD=yourpassword
+DATABASE_NAME=gap-payment
+AUTHENTICATION_KEY=your-auth-key
+PORT=3000
+```
+
+**Note:**  
+`.env` is in `.gitignore` and should **not** be committed.
+
+### 5. Install Dependencies
+
+```bash
+npm install
+```
+
+### 6. Run the Application
+
+```bash
+npm run start:dev
+```
+
+- The API will be available at [http://localhost:3000](http://localhost:3000).
+
+### 7. API Usage
+
+- **POST /payments**: Create a payment.
+- **POST /provider/webhook**: Simulate provider callback.
+- **GET /payments/:id**: Get payment status/details.
+
+---
+
+**You can now develop and test the service locally without Docker.**
+
+## Local Development Setup with Docker 
 
 ### 1. Prerequisites
 
